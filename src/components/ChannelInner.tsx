@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
 import {
 	MessageList,
 	MessageInput,
@@ -8,70 +8,66 @@ import {
 	Avatar,
 	useChannelStateContext,
 	useChatContext,
+	MessageToSend,
 } from "stream-chat-react";
+import { logChatPromiseExecution } from 'stream-chat';
+import { DefaultStreamChatGenerics } from "stream-chat-react/dist/types/types";
 
 export const GiphyContext = React.createContext({});
 
 interface Props {
 	setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+	isEditing:boolean
 }
 
-type User = {
-	id: string;
-	fullName: string;
-	image: string;
-	name: string;
-	role: string;
-};
-
-type Attachment = {
-	og_scrape_url: string;
-	image_url: string;
-	type: string;
-	title: string;
-	title_link: string;
-};
-
-type Message = {
-	attachments: Attachment[];
-	mentioned_users: User[];
-	parent_id: string;
-	parent: Message;
-	text: string;
-};
-
-const ChannelInner: React.FC<Props> = ({ setIsEditing }) => {
+const ChannelInner: React.FC<Props> = ({ isEditing,setIsEditing }) => {
 	const [giphyState, setGiphyState] = useState(false);
-	const { sendMessage } = useChannelActionContext();
+	const { sendMessage } = useChannelActionContext<DefaultStreamChatGenerics>();
+	const actions = ['delete', 'edit', 'flag', 'mute', 'react', 'reply'];
 
-	const overrideSubmitHandler = (message: Message) => {
-		let updatedMessage = {
-			attachments: message.attachments,
-			mentioned_users: message.mentioned_users,
-			parent_id: message.parent_id,
-			parent: message.parent,
-			text: message.text,
-		};
-
-		console.log(updatedMessage);
-
+	const overrideSubmitHandler = (message: MessageToSend<DefaultStreamChatGenerics>) => {
+		let updatedMessage;
+	
+		if (message.attachments?.length && message.text?.startsWith('/giphy')) {
+		  const updatedText = message.text.replace('/giphy', '');
+		  updatedMessage = { ...message, text: updatedText };
+		}
+	
 		if (giphyState) {
-			updatedMessage = { ...updatedMessage, text: `/giphy ${message.text}` };
+		  const updatedText = `/giphy ${message.text}`;
+		  updatedMessage = { ...message, text: updatedText };
 		}
-
+	
 		if (sendMessage) {
-			sendMessage(updatedMessage);
-			setGiphyState(false);
+		  const newMessage = updatedMessage || message;
+		  const parentMessage = newMessage.parent;
+	
+		  const messageToSend = {
+			...newMessage,
+			parent: parentMessage
+			  ? {
+				  ...parentMessage,
+				  created_at: parentMessage.created_at?.toString(),
+				  pinned_at: parentMessage.pinned_at?.toString(),
+				  updated_at: parentMessage.updated_at?.toString(),
+				}
+			  : undefined,
+		  };
+	
+		  const sendMessagePromise = sendMessage(messageToSend);
+		  logChatPromiseExecution(sendMessagePromise, 'send message');
 		}
-	};
+	
+		setGiphyState(false);
+	  };
 
 	return (
 		<GiphyContext.Provider value={{ giphyState, setGiphyState }}>
 			<div className='flex w-full'>
 				<Window>
-					<TeamChannelHeader setIsEditing={setIsEditing} />
-					<MessageList />
-					<MessageInput overrideSubmitHandler={overrideSubmitHandler} />
+					<TeamChannelHeader isEditing={isEditing} setIsEditing={setIsEditing} />
+					<MessageList messageActions={actions} />
+					<MessageInput focus overrideSubmitHandler={overrideSubmitHandler} />
 				</Window>
 				<Thread />
 			</div>

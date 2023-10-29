@@ -6,7 +6,7 @@ import { ChannelInner, CreateChannel, EditChannel, TeamMessage } from "./";
 interface Props {
 	isCreating?: boolean;
 	setIsCreating?: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 	isEditing: boolean;
 	createType: string;
 }
@@ -54,13 +54,8 @@ const ChannelContainer: React.FC<Props> = ({
 		<div className='channel_container w-full'>
 			<Channel
 				EmptyStateIndicator={EmptyState}
-				Message={(messageProps, idx) => (
-					<TeamMessage
-						key={idx}
-						{...messageProps}
-					/>
-				)}>
-				<ChannelInner setIsEditing={setIsEditing} />
+				Message={TeamMessage}>
+				<ChannelInner isEditing={isEditing} setIsEditing={setIsEditing} />
 			</Channel>
 		</div>
 	);

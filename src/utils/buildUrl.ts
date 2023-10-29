@@ -1,5 +1,5 @@
 export const buildUrl = (endpoint: string) => {
 	return import.meta.env.DEV
-		? `http://localhost:8000/api${endpoint}`
+		? `${import.meta.env.VITE_REACT_APP_API_BASE_URL}/api${endpoint}`
 		: `/api${endpoint}`;
 };
