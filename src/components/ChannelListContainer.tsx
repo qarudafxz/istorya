@@ -12,10 +12,12 @@ interface Props {
 	setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>;
 	setCreateType?: React.Dispatch<React.SetStateAction<string>>;
 }
+const cookies = new Cookies();
+
+const clientImage = cookies.get("avatarUrl");
 
 const Sidebar = () => {
 	const logout = () => {
-		const cookies = new Cookies();
 		cookies.remove("token");
 		cookies.remove("userId");
 		cookies.remove("fullName");
@@ -27,33 +29,44 @@ const Sidebar = () => {
 
 	return (
 		<div className='channel-list__sidebar border-r border-zinc-700'>
-			<div
-				className='channel-list__sidebar__icon1'
-				style={{ backgroundColor: "transparent" }}>
-				<div className='icon1__inner'>
+			<div className='flex flex-col items-center place-items-center justify-between h-full pb-4'>
+				<div>
+					<div
+						className='channel-list__sidebar__icon1'
+						style={{ backgroundColor: "transparent" }}>
+						<div className='icon1__inner'>
+							<img
+								src={logo}
+								alt='logo'
+								width='30'
+							/>
+						</div>
+					</div>
+					<div className='channel-list__sidebar__icon1  cursor-pointer'>
+						<div className='icon1__inner'>
+							<RiGroup2Fill
+								size={20}
+								className='text-primary'
+							/>
+						</div>
+					</div>
+					<div
+						className='channel-list__sidebar__icon1 cursor-pointer'
+						onClick={logout}>
+						<div className='icon1__inner'>
+							<TbLogout2
+								size={20}
+								className='text-primary'
+							/>
+						</div>
+					</div>
+				</div>
+				<div>
 					<img
-						src={logo}
-						alt='logo'
-						width='30'
+						src={clientImage}
+						className='rounded-full w-10'
 					/>
-				</div>
-			</div>
-			<div className='channel-list__sidebar__icon1  cursor-pointer'>
-				<div className='icon1__inner'>
-					<RiGroup2Fill
-						size={20}
-						className='text-primary'
-					/>
-				</div>
-			</div>
-			<div
-				className='channel-list__sidebar__icon1 cursor-pointer'
-				onClick={logout}>
-				<div className='icon1__inner'>
-					<TbLogout2
-						size={20}
-						className='text-primary'
-					/>
+					<span className='bg-green-500 w-2 h-2 rounded-full relative bottom-10'></span>
 				</div>
 			</div>
 		</div>

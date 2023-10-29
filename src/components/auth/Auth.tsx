@@ -4,6 +4,8 @@ import { buildUrl } from "../../utils/buildUrl.ts";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import TopLoadingBar from "react-top-loading-bar";
+
 import bg from "../../assets/dark_bg.png";
 import logo from "../../assets/logo.png";
 
@@ -20,12 +22,13 @@ const initialState = {
 const Auth: React.FC = () => {
 	const [form, setForm] = useState(initialState);
 	const [isSignup, setIsSignup] = useState(false);
+	const [progress, setProgress] = useState(0);
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		const { fullName, username, password, confirmPassword, avatarUrl } = form;
-
+		setProgress(30);
 		try {
 			fetch(buildUrl(`/auth/${isSignup ? "signup" : "login"}`), {
 				method: "POST",
@@ -47,8 +50,10 @@ const Auth: React.FC = () => {
 					cookies.set("fullName", data.fullName);
 					cookies.set("userId", data.userId);
 					cookies.set("avatarUrl", data.avatarUrl);
-
-					window.location.reload();
+					setProgress(100);
+					setTimeout(() => {
+						window.location.reload();
+					}, 1000);
 				}
 
 				toast.error(data.message, {
@@ -60,6 +65,7 @@ const Auth: React.FC = () => {
 					draggable: true,
 					theme: "dark",
 				});
+				setProgress(100);
 			});
 		} catch (err) {
 			console.log(err);
@@ -80,6 +86,12 @@ const Auth: React.FC = () => {
 				backgroundPosition: "center",
 			}}>
 			<ToastContainer />
+			<TopLoadingBar
+				progress={progress}
+				color='#FF60DD'
+				onLoaderFinished={() => setProgress(0)}
+				height={2}
+			/>
 			<img
 				src={logo}
 				alt='Logo'

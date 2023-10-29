@@ -33,8 +33,6 @@ export const login = async (req: Request, res: Response) => {
 
 		const user = allUsers.filter((u: User) => u.username === username);
 
-		console.log(user);
-
 		if (user.length === 0)
 			return res.status(400).json({ message: "User not found" });
 

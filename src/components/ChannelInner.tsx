@@ -53,6 +53,8 @@ const ChannelInner: React.FC<Props> = ({ setIsEditing }) => {
 			text: message.text,
 		};
 
+		console.log(updatedMessage);
+
 		if (giphyState) {
 			updatedMessage = { ...updatedMessage, text: `/giphy ${message.text}` };
 		}
@@ -65,7 +67,7 @@ const ChannelInner: React.FC<Props> = ({ setIsEditing }) => {
 
 	return (
 		<GiphyContext.Provider value={{ giphyState, setGiphyState }}>
-			<div style={{ display: "flex", width: "100%" }}>
+			<div className='flex w-full'>
 				<Window>
 					<TeamChannelHeader setIsEditing={setIsEditing} />
 					<MessageList />
@@ -83,25 +85,26 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing }) => {
 
 	const MessagingHeader = () => {
 		const members = Object.values(channel.state.members).filter(
-			({ user }) => user?.id !== client?.userID
+			({ user }) => user?.id !== client._user?.id
 		);
+
 		const additionalMembers = members.length - 3;
 
-		if (channel?.type === "messaging") {
+		if (channel?.type === "messaging" || channel?.type === "team") {
 			return (
 				<div className='team-channel-header__name-wrapper'>
-					{members.map(({ user }, i) => (
+					<p className='font-main text-2xl font-bold mr-8 text-primary'>
+						# {channel?.data?.name}
+					</p>
+					{members?.map(({ user }, i) => (
 						<div
 							key={i}
 							className='team-channel-header__name-multi'>
 							<Avatar
-								image={user?.image}
+								image={user?.image || client._user?.image}
 								name={(user?.fullName as string) || user?.id}
-								size={32}
+								size={35}
 							/>
-							<p className='team-channel-header__name user'>
-								{user?.fullName || (user?.id as ReactNode)}
-							</p>
 						</div>
 					))}
 
@@ -116,7 +119,6 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing }) => {
 
 		return (
 			<div className='team-channel-header__channel-wrapper'>
-				<p className='team-channel-header__name'># {channel?.data?.name}</p>
 				<span
 					style={{ display: "flex" }}
 					onClick={() => setIsEditing(true)}></span>
@@ -139,7 +141,7 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing }) => {
 			<MessagingHeader />
 			<div className='team-channel-header__right'>
 				<p className='team-channel-header__right-text'>
-					{getWatcherText({ watchers: watcher_count })}
+					{getWatcherText({ watchers: watcher_count as number })}
 				</p>
 			</div>
 		</div>

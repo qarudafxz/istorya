@@ -51,7 +51,7 @@ const ChannelContainer: React.FC<Props> = ({
 	);
 
 	return (
-		<div className='channel_container'>
+		<div className='channel_container w-full'>
 			<Channel
 				EmptyStateIndicator={EmptyState}
 				Message={(messageProps, idx) => (
