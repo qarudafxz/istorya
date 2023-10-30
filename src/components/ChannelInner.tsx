@@ -14,6 +14,7 @@ import { logChatPromiseExecution } from "stream-chat";
 import { DefaultStreamChatGenerics } from "stream-chat-react/dist/types/types";
 import { IoMdSettings } from "react-icons/io";
 import bg from "../assets/bg.svg";
+import { RiGroup2Fill } from "react-icons/ri";
 
 export const GiphyContext = React.createContext({});
 
@@ -111,9 +112,15 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 						backgroundRepeat: "no-repeat",
 						backgroundPosition: "center",
 					}}>
-					<p className='font-main text-2xl font-bold mr-8 text-primary'>
-						# {channel?.data?.name}
-					</p>
+					{channel?.type === "team" && (
+						<p className='font-main text-2xl font-bold mr-8 text-primary flex items-center gap-2'>
+							<RiGroup2Fill
+								size={25}
+								className='text-primary'
+							/>
+							{channel?.data?.name}
+						</p>
+					)}
 					{channel?.type === "team" && (
 						<span
 							style={{ display: "flex" }}
@@ -124,18 +131,33 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 							/>
 						</span>
 					)}
-					{members?.map(({ user }, i) => (
-						<div
-							key={i}
-							className='team-channel-header__name-multi'>
+
+					{channel?.type === "team" &&
+						members?.map(({ user }, i) => (
+							<div
+								key={i}
+								className='team-channel-header__name-multi'>
+								<Avatar
+									image={user?.image || client._user?.image}
+									name={(user?.fullName as string) || user?.id}
+									size={35}
+								/>
+							</div>
+						))}
+					{channel?.type === "messaging" && (
+						<div className='team-channel-header__name-multi'>
 							<Avatar
-								image={user?.image || client._user?.image}
-								name={(user?.fullName as string) || user?.id}
+								image={members[0]?.user?.image || members[0]?.user_id}
+								name={(members[0]?.user?.name as string) || members[0]?.user_id}
 								size={35}
 							/>
 						</div>
-					))}
-
+					)}
+					{channel?.type === "messaging" && (
+						<p className='font-main text-zinc-300 mr-2 font-semibold'>
+							{members[0].user?.name || members[0]?.user_id}
+						</p>
+					)}
 					{additionalMembers > 0 && (
 						<p className='team-channel-header__name user'>
 							and {additionalMembers} more

@@ -46,7 +46,7 @@ const IstroyaChannelList: React.FC<IstroyaChannelListProps> = ({
 		<div className='team-channel-list'>
 			<div className='team-channel__header'>
 				<p className='team-channel-list__header__title flex gap-4 items-center p-4'>
-					{type === "team" ? "Groups" : "Direct Messages"}
+					{type === "team" ? "Group Chats" : "Istorya DMs"}
 					<AddChannel
 						setIsCreating={setIsCreating}
 						setIsEditing={setIsEditing}
