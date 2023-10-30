@@ -1,30 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChannelList, useChatContext } from "stream-chat-react";
 import { ChannelSearch, TeamChannelList, TeamChannelPreview } from "./";
 import Cookies from "universal-cookie";
 import logo from "../assets/pink_icon_logo.png";
-import { RiGroup2Fill } from "react-icons/ri";
 import { TbLogout2 } from "react-icons/tb";
+import TopLoadingBar from "react-top-loading-bar";
 
 interface Props {
 	isCreating?: boolean;
 	setIsCreating?: React.Dispatch<React.SetStateAction<boolean>>;
 	setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>;
 	setCreateType?: React.Dispatch<React.SetStateAction<string>>;
+	setToggleContainer?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const cookies = new Cookies();
 
 const clientImage = cookies.get("avatarUrl");
 
-const Sidebar = () => {
+const Sidebar: React.FC<{
+	setProgress: React.Dispatch<React.SetStateAction<number>>;
+}> = ({ setProgress }) => {
 	const logout = () => {
+		setProgress(30);
+
 		cookies.remove("token");
 		cookies.remove("userId");
 		cookies.remove("fullName");
 		cookies.remove("avatarUrl");
 		cookies.remove("username");
+		setTimeout(() => {
+			setProgress(100);
+		}, 1000);
 
-		window.location.reload();
+		setTimeout(() => {
+			window.location.reload();
+		}, 2000);
 	};
 
 	return (
@@ -42,14 +52,7 @@ const Sidebar = () => {
 							/>
 						</div>
 					</div>
-					<div className='channel-list__sidebar__icon1  cursor-pointer'>
-						<div className='icon1__inner'>
-							<RiGroup2Fill
-								size={20}
-								className='text-primary'
-							/>
-						</div>
-					</div>
+
 					<div
 						className='channel-list__sidebar__icon1 cursor-pointer'
 						onClick={logout}>
@@ -68,6 +71,7 @@ const Sidebar = () => {
 					/>
 					<span className='bg-green-500 w-2 h-2 rounded-full relative bottom-10'></span>
 				</div>
+				TopLoadingBar
 			</div>
 		</div>
 	);
@@ -83,50 +87,131 @@ const CompanyHeader = () => {
 	);
 };
 
-const ChannelListContainer: React.FC<Props> = ({
-	isCreating,
+type Channels = {
+	team: any[];
+	messaging: any[];
+	[key: string]: any;
+};
 
+const customChannelTeamFilter = (channels: Channels) => {
+	return channels.filter((channel) => channel.type === "team");
+};
+
+const customChannelMessageFilter = (channels: Channels) => {
+	return channels.filter((channel) => channel.type === "messaging");
+};
+
+const ChannelListContent: React.FC<Props> = ({
+	isCreating,
 	setIsEditing,
 	setIsCreating,
+	setCreateType,
+	setToggleContainer,
 }) => {
+	const { client } = useChatContext();
+	const [progress, setProgress] = useState(0);
+
+	const filters = { members: { $in: [client.userID] } };
+
 	return (
 		<>
-			<Sidebar />
+			<Sidebar setProgress={setProgress} />
 			<div className='channel-list__list__wrapper border-r border-zinc-700'>
+				<TopLoadingBar
+					progress={progress}
+					color='#FF60DD'
+					onLoaderFinished={() => setProgress(0)}
+					height={2}
+				/>
 				<CompanyHeader />
-				<ChannelSearch />
+				<ChannelSearch setToggleContainer={setToggleContainer} />
 				<ChannelList
-					filters={{}}
-					channelRenderFilterFn={() => {}}
+					filters={filters}
+					channelRenderFilterFn={customChannelTeamFilter}
 					List={(props) => (
 						<TeamChannelList
 							{...props}
 							type='team'
+							isCreating={isCreating}
+							setIsCreating={setIsCreating}
+							setIsEditing={setIsEditing}
+							setCreateType={setCreateType}
+							setToggleContainer={setToggleContainer}
 						/>
 					)}
 					Preview={(props) => (
 						<TeamChannelPreview
 							{...props}
 							type='team'
+							setToggleContainer={setToggleContainer}
+							setIsCreating={setIsCreating}
+							setIsEditing={setIsEditing}
 						/>
 					)}
 				/>
 				<ChannelList
-					filters={{}}
-					channelRenderFilterFn={() => {}}
+					filters={filters}
+					channelRenderFilterFn={customChannelMessageFilter}
 					List={(props) => (
 						<TeamChannelList
 							{...props}
 							type='messaging'
+							isCreating={isCreating}
+							setIsCreating={setIsCreating}
+							setIsEditing={setIsEditing}
+							setCreateType={setCreateType}
+							setToggleContainer={setToggleContainer}
 						/>
 					)}
 					Preview={(props) => (
 						<TeamChannelPreview
 							{...props}
 							type='messaging'
+							setToggleContainer={setToggleContainer}
+							setIsCreating={setIsCreating}
+							setIsEditing={setIsEditing}
 						/>
 					)}
 				/>
+			</div>
+		</>
+	);
+};
+
+const ChannelListContainer: React.FC<Props> = ({
+	setCreateType,
+	setIsCreating,
+	setIsEditing,
+}) => {
+	const [toggleContainer, setToggleContainer] = useState(false);
+
+	return (
+		<>
+			<div className='channel-list__container'>
+				<ChannelListContent
+					setIsCreating={setIsCreating}
+					setIsEditing={setIsEditing}
+					setCreateType={setCreateType}
+				/>
+			</div>
+			<div
+				className='channel-list__container-responsive'
+				style={{
+					left: toggleContainer ? "0%" : "-89%",
+					backgroundColor: "#0f0f0f",
+				}}>
+				<div
+					className='channel-list__container-toggle'
+					onClick={() =>
+						setToggleContainer((prevToggleContainer) => !prevToggleContainer)
+					}>
+					<ChannelListContent
+						setIsCreating={setIsCreating}
+						setIsEditing={setIsEditing}
+						setCreateType={setCreateType}
+						setToggleContainer={setToggleContainer}
+					/>
+				</div>
 			</div>
 		</>
 	);

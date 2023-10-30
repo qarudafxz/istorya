@@ -12,6 +12,8 @@ import {
 } from "stream-chat-react";
 import { logChatPromiseExecution } from "stream-chat";
 import { DefaultStreamChatGenerics } from "stream-chat-react/dist/types/types";
+import { IoMdSettings } from "react-icons/io";
+import bg from "../assets/bg.svg";
 
 export const GiphyContext = React.createContext({});
 
@@ -52,6 +54,7 @@ const ChannelInner: React.FC<Props> = ({ isEditing, setIsEditing }) => {
 							created_at: parentMessage.created_at?.toString(),
 							pinned_at: parentMessage.pinned_at?.toString(),
 							updated_at: parentMessage.updated_at?.toString(),
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
 					  }
 					: undefined,
 			};
@@ -65,7 +68,11 @@ const ChannelInner: React.FC<Props> = ({ isEditing, setIsEditing }) => {
 
 	return (
 		<GiphyContext.Provider value={{ giphyState, setGiphyState }}>
-			<div className='flex w-full'>
+			<div
+				className='flex w-full'
+				style={{
+					backgroundColor: "#1A1A1A",
+				}}>
 				<Window>
 					<TeamChannelHeader
 						isEditing={isEditing}
@@ -83,7 +90,7 @@ const ChannelInner: React.FC<Props> = ({ isEditing, setIsEditing }) => {
 	);
 };
 
-const TeamChannelHeader: React.FC<Props> = ({ setIsEditing }) => {
+const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 	const { channel, watcher_count } = useChannelStateContext();
 	const { client } = useChatContext();
 
@@ -96,10 +103,27 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing }) => {
 
 		if (channel?.type === "messaging" || channel?.type === "team") {
 			return (
-				<div className='team-channel-header__name-wrapper'>
+				<div
+					className='team-channel-header__name-wrapper'
+					style={{
+						backgroundImage: `url(${bg})`,
+						backgroundSize: "cover",
+						backgroundRepeat: "no-repeat",
+						backgroundPosition: "center",
+					}}>
 					<p className='font-main text-2xl font-bold mr-8 text-primary'>
 						# {channel?.data?.name}
 					</p>
+					{channel?.type === "team" && (
+						<span
+							style={{ display: "flex" }}
+							onClick={() => setIsEditing(!isEditing)}>
+							<IoMdSettings
+								size={15}
+								className='text-zinc-400 cursor-pointer mr-4'
+							/>
+						</span>
+					)}
 					{members?.map(({ user }, i) => (
 						<div
 							key={i}
@@ -120,14 +144,6 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing }) => {
 				</div>
 			);
 		}
-
-		return (
-			<div className='team-channel-header__channel-wrapper'>
-				<span
-					style={{ display: "flex" }}
-					onClick={() => setIsEditing(true)}></span>
-			</div>
-		);
 	};
 
 	interface Watchers {

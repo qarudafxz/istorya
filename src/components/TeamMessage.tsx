@@ -16,7 +16,6 @@ import {
 	MessageStatus,
 	MessageTimestamp,
 	MessageUIComponentProps,
-	// QuotedMessage,
 	ReactEventHandler,
 	ReactionIcon,
 	ReactionSelector,
