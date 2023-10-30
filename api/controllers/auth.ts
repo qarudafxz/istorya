@@ -5,20 +5,12 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
-interface User {
-	fullName: string;
-	username: string;
-	password: string;
-	confirmPassword: string;
-	avatarUrl: string;
-}
+const apiKey = process.env.VITE_REACT_APP_STREAM_API_KEY;
+const apiSecret = process.env.VITE_REACT_APP_STREAM_API_SECRET;
 
 export const login = async (req: Request, res: Response) => {
 	const { username, password } = req.body;
 	try {
-		const apiKey = process.env.VITE_REACT_APP_STREAM_API_KEY;
-		const apiSecret = process.env.VITE_REACT_APP_STREAM_API_SECRET;
-
 		const serverClient = StreamChat.StreamChat.getInstance(
 			apiKey as string,
 			apiSecret
@@ -27,18 +19,14 @@ export const login = async (req: Request, res: Response) => {
 		if (!password || !username)
 			return res.status(400).json({ message: "Fill in the fields" });
 
-		const { users } = await serverClient.queryUsers({ name: username });
+		const { users } = await serverClient.queryUsers({ username: username });
 
-		const allUsers = users as unknown as User[];
-
-		const user = allUsers.filter((u: User) => u.username === username);
-
-		if (user.length === 0)
+		if (users.length === 0)
 			return res.status(400).json({ message: "User not found" });
 
 		const isMatchPassword = await bcrypt.compare(
 			password,
-			user[0].password as string
+			users[0].password as string
 		);
 
 		const token = serverClient.createToken(users[0].id);
@@ -66,18 +54,11 @@ export const signup = async (req: Request, res: Response) => {
 	try {
 		const userId = crypto.randomBytes(16).toString("hex");
 
-		const apiKey = process.env.VITE_REACT_APP_STREAM_API_KEY;
-		const apiSecret = process.env.VITE_REACT_APP_STREAM_API_SECRET;
-
 		const serverClient = new StreamChat.StreamChat(apiKey as string, apiSecret);
 
-		const { users } = await serverClient.queryUsers({});
+		const { users } = await serverClient.queryUsers({ username: username });
 
-		const allUsers = users as unknown as User[];
-
-		const user = allUsers.filter((u: User) => u.username === username);
-
-		if (user.length > 0)
+		if (users.length > 0)
 			return res.status(400).json({ message: "Username already exist" });
 
 		if (password !== confirmPassword)

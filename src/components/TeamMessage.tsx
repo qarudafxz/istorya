@@ -175,7 +175,6 @@ const MessageTeamWithContext = (props: MessageTeamWithContextProps) => {
 							message.text === "" ? "image" : "text"
 						}`}
 						data-testid='message-team-content'>
-						{/*{message.quoted_message && <QuotedMessage />}*/}
 						{!initialMessage &&
 							message.status !== "sending" &&
 							message.status !== "failed" &&
