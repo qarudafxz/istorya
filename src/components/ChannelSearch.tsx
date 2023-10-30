@@ -4,13 +4,26 @@ import { useChatContext } from "stream-chat-react";
 import { LuSearch } from "react-icons/lu";
 import { ResultsDropdown } from "./";
 
-const ChannelSearch: React.FC = () => {
+interface ChannelSearchProps {
+	setToggleContainer?: React.Dispatch<React.SetStateAction<boolean>> | undefined;
+}
+
+const ChannelSearch: React.FC<ChannelSearchProps> = ({
+	setToggleContainer,
+}) => {
 	const { client, setActiveChannel } = useChatContext();
 
 	const [query, setQuery] = useState("");
 	const [teamChannels, setTeamChannels] = useState([]);
 	const [directChannels, setDirectChannels] = useState([]);
 	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		if (!query) {
+			setTeamChannels([]);
+			setDirectChannels([]);
+		}
+	}, [query]);
 
 	const getChannels = async (input: string) => {
 		try {
@@ -44,6 +57,11 @@ const ChannelSearch: React.FC = () => {
 		getChannels(e.target.value);
 	};
 
+	const setChannel = (channel) => {
+		setQuery("");
+		setActiveChannel(channel);
+	};
+
 	return (
 		<div className='channel-search__container'>
 			<div className='channel-search__input__wrapper'>
@@ -63,6 +81,7 @@ const ChannelSearch: React.FC = () => {
 						directChannels={directChannels}
 						loading={loading}
 						setActiveChannel={setActiveChannel}
+						setChannel={setChannel}
 						setQuery={setQuery}
 						setTeamChannels={setTeamChannels}
 						setDirectChannels={setDirectChannels}

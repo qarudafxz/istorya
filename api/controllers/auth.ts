@@ -27,7 +27,7 @@ export const login = async (req: Request, res: Response) => {
 		if (!password || !username)
 			return res.status(400).json({ message: "Fill in the fields" });
 
-		const { users } = await serverClient.queryUsers({});
+		const { users } = await serverClient.queryUsers({ name: username });
 
 		const allUsers = users as unknown as User[];
 

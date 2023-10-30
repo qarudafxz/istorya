@@ -69,9 +69,7 @@ const Sidebar: React.FC<{
 						src={clientImage}
 						className='rounded-full w-10'
 					/>
-					<span className='bg-green-500 w-2 h-2 rounded-full relative bottom-10'></span>
 				</div>
-				TopLoadingBar
 			</div>
 		</div>
 	);
