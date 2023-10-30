@@ -200,7 +200,7 @@ const Auth: React.FC = () => {
 						</div>
 						<div className='w-full flex items-center'>
 							<span className='text-zinc-700 text-center mx-auto font-main text-[10px]'>
-								Made with 🩷 by Francis and Reina
+								Made with 🩷 by Francis and Riena
 							</span>
 						</div>
 					</form>
