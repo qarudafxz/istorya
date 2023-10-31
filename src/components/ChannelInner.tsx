@@ -191,20 +191,22 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 								/>
 							</div>
 						))}
+					{/* Displays the avatar and name of the person you chatted */}
 					{channel?.type === "messaging" && (
 						<div className='team-channel-header__name-multi'>
 							<Avatar
-								image={members[0]?.user?.image || members[0]?.user_id}
-								name={(members[0]?.user?.name as string) || members[0]?.user_id}
+								image={members[1]?.user?.image || members[1]?.user_id}
+								name={(members[1]?.user?.name as string) || members[1]?.user_id}
 								size={35}
 							/>
 						</div>
 					)}
 					{channel?.type === "messaging" && (
 						<p className='font-main text-zinc-300 mr-2 font-semibold'>
-							{members[0].user?.name || members[0]?.user_id}
+							{members[1].user?.name || members[1]?.user_id}
 						</p>
 					)}
+					{/*  */}
 					{additionalMembers > 0 && (
 						<p className='team-channel-header__name user'>
 							and {additionalMembers} more
