@@ -62,7 +62,9 @@ const CreateChannel: React.FC<Props> = ({ createType, setIsCreating }) => {
 					style={{
 						color: "#FF60DD",
 					}}>
-					{createType === "team" ? "Create a new Channer" : "Send a Direct Message"}
+					{createType === "team"
+						? "Create a new Group Chat"
+						: "Send a Direct Message"}
 				</p>
 				<CloseCreateChannel setIsCreating={setIsCreating} />
 			</div>
@@ -73,13 +75,13 @@ const CreateChannel: React.FC<Props> = ({ createType, setIsCreating }) => {
 				}}>
 				{createType === "team" && (
 					<div className=''>
-						<p>Name</p>
+						<p>Input Group Chat Name (Avoid spaces and characters)</p>
 						<input
 							value={channelName}
 							onChange={(e: ChangeEvent<HTMLInputElement>) =>
 								setChannelName(e.target.value)
 							}
-							placeholder='Channel Name'
+							placeholder='GC Name'
 						/>
 						<p>Add Members</p>
 					</div>
@@ -88,7 +90,9 @@ const CreateChannel: React.FC<Props> = ({ createType, setIsCreating }) => {
 				<div
 					className='create-channel__button-wrapper'
 					onClick={createChannel}>
-					<p>{createType === "team" ? "Create Channel" : "Create Message Group"}</p>
+					<p>
+						{createType === "team" ? "Create Group Chat" : "Create Direct Message"}
+					</p>
 				</div>
 			</div>
 		</div>
