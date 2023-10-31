@@ -30,7 +30,7 @@ const ShowMembersOfTeam = () => {
 	return (
 		<>
 			{channel?.type === "team" && (
-				<div className='border-l h-full bg-[#121212]'>
+				<div className='border-l border-zinc-800 h-full bg-[#121212]'>
 					<div className='flex flex-col gap-4'>
 						<p className='font-main font-bold text-primary p-5 bg-[#060606]'>
 							Group Members
