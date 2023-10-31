@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	MessageList,
 	MessageInput,
@@ -24,7 +24,6 @@ interface Props {
 
 const ShowMembersOfTeam = () => {
 	const { channel } = useChannelStateContext();
-
 	const members = Object.values(channel.state.members);
 
 	return (
@@ -41,6 +40,11 @@ const ShowMembersOfTeam = () => {
 									<div
 										key={i}
 										className='team-channel-header__name-multi'>
+										{user?.user?.online ? (
+											<div className='bg-[#02B01F] rounded-full w-[14px] h-[14px] relative bottom-3 left-9 border-2 border-[#1a1a1a]' />
+										) : (
+											<div className='bg-zinc-600 rounded-full w-[14px] h-[14px] relative bottom-3 left-9 border-2 border-[#1a1a1a]' />
+										)}
 										<Avatar
 											image={user?.user?.image || user?.user_id}
 											name={user?.user?.name || user?.user_id}
@@ -191,7 +195,6 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 								/>
 							</div>
 						))}
-					{/* Displays the avatar and name of the person you chatted */}
 					{channel?.type === "messaging" && (
 						<div className='team-channel-header__name-multi'>
 							<Avatar
@@ -206,7 +209,6 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 							{members[1].user?.name || members[1]?.user_id}
 						</p>
 					)}
-					{/*  */}
 					{additionalMembers > 0 && (
 						<p className='team-channel-header__name user'>
 							and {additionalMembers} more
