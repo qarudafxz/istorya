@@ -7,7 +7,6 @@ import {
 	useChannelActionContext,
 	Avatar,
 	useChannelStateContext,
-	useChatContext,
 	MessageToSend,
 } from "stream-chat-react";
 import { logChatPromiseExecution } from "stream-chat";
@@ -23,7 +22,43 @@ interface Props {
 	isEditing: boolean;
 }
 
+const ShowMembersOfTeam = () => {
+	const { channel } = useChannelStateContext();
+
+	const members = Object.values(channel.state.members);
+
+	return (
+		<>
+			{channel?.type === "team" && (
+				<div className='border-l h-full bg-[#121212]'>
+					<div className='flex flex-col gap-4'>
+						<p className='font-main font-bold text-primary p-5 bg-[#060606]'>
+							Group Members
+						</p>
+						<div className='flex flex-col gap-5 p-4'>
+							{channel?.type === "team" &&
+								members?.map((user, i) => (
+									<div
+										key={i}
+										className='team-channel-header__name-multi'>
+										<Avatar
+											image={user?.user?.image || user?.user_id}
+											name={user?.user?.name || user?.user_id}
+											size={35}
+										/>
+										<p className='font-main text-zinc-400'>{user?.user?.name}</p>
+									</div>
+								))}
+						</div>
+					</div>
+				</div>
+			)}
+		</>
+	);
+};
+
 const ChannelInner: React.FC<Props> = ({ isEditing, setIsEditing }) => {
+	const { channel } = useChannelStateContext();
 	const [giphyState, setGiphyState] = useState(false);
 	const { sendMessage } = useChannelActionContext<DefaultStreamChatGenerics>();
 	const actions = ["delete", "edit", "flag", "mute", "react", "reply"];
@@ -68,37 +103,49 @@ const ChannelInner: React.FC<Props> = ({ isEditing, setIsEditing }) => {
 	};
 
 	return (
-		<GiphyContext.Provider value={{ giphyState, setGiphyState }}>
-			<div
-				className='flex w-full'
-				style={{
-					backgroundColor: "#1A1A1A",
-				}}>
-				<Window>
-					<TeamChannelHeader
-						isEditing={isEditing}
-						setIsEditing={setIsEditing}
-					/>
-					<MessageList messageActions={actions} />
-					<MessageInput
-						focus
-						overrideSubmitHandler={overrideSubmitHandler}
-					/>
-				</Window>
-				<Thread />
+		<div
+			className={`${
+				channel?.type === "team" ? "grid grid-cols-9" : ""
+			} w-full max-h-screen`}
+			style={{
+				height: "100vh",
+			}}>
+			<div className={`${channel?.type === "team" && "col-span-7"}`}>
+				<GiphyContext.Provider value={{ giphyState, setGiphyState }}>
+					<div
+						className='flex w-full h-screen'
+						style={{
+							backgroundColor: "#1A1A1A",
+						}}>
+						<Window>
+							<TeamChannelHeader
+								isEditing={isEditing}
+								setIsEditing={setIsEditing}
+							/>
+							<MessageList messageActions={actions} />
+							<MessageInput
+								focus
+								overrideSubmitHandler={overrideSubmitHandler}
+							/>
+						</Window>
+						<Thread />
+					</div>
+				</GiphyContext.Provider>
 			</div>
-		</GiphyContext.Provider>
+			{channel?.type === "team" && (
+				<div className='xxxs:hidden md:block col-span-2'>
+					<ShowMembersOfTeam />
+				</div>
+			)}
+		</div>
 	);
 };
 
 const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 	const { channel, watcher_count } = useChannelStateContext();
-	const { client } = useChatContext();
 
 	const MessagingHeader = () => {
-		const members = Object.values(channel.state.members).filter(
-			({ user }) => user?.id !== client._user?.id
-		);
+		const members = Object.values(channel.state.members);
 
 		const additionalMembers = members.length - 3;
 
@@ -133,13 +180,13 @@ const TeamChannelHeader: React.FC<Props> = ({ setIsEditing, isEditing }) => {
 					)}
 
 					{channel?.type === "team" &&
-						members?.map(({ user }, i) => (
+						members?.map((user, i) => (
 							<div
 								key={i}
 								className='team-channel-header__name-multi'>
 								<Avatar
-									image={user?.image || client._user?.image}
-									name={(user?.fullName as string) || user?.id}
+									image={user?.user?.image || user?.user_id}
+									name={user?.user?.name || user?.user_id}
 									size={35}
 								/>
 							</div>
