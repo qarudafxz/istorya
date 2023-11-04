@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { Channel } from "stream-chat";
 import { Avatar, useChatContext } from "stream-chat-react";
 
 type Props = {
