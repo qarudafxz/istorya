@@ -1,20 +1,16 @@
-import { Request, Response } from "express";
 import crypto from "crypto";
 import StreamChat from "stream-chat";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
-const apiKey = process.env.VITE_REACT_APP_STREAM_API_KEY;
-const apiSecret = process.env.VITE_REACT_APP_STREAM_API_SECRET;
+const apiKey = import.meta.env.VITE_REACT_APP_STREAM_API_KEY;
+const apiSecret = import.meta.env.VITE_REACT_APP_STREAM_API_SECRET;
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req, res) => {
 	const { username, password } = req.body;
 	try {
-		const serverClient = StreamChat.StreamChat.getInstance(
-			apiKey as string,
-			apiSecret
-		);
+		const serverClient = StreamChat.StreamChat.getInstance(apiKey, apiSecret);
 
 		if (!password || !username)
 			return res.status(400).json({ message: "Fill in the fields" });
@@ -24,10 +20,7 @@ export const login = async (req: Request, res: Response) => {
 		if (users.length === 0)
 			return res.status(400).json({ message: "User not found" });
 
-		const isMatchPassword = await bcrypt.compare(
-			password,
-			users[0].password as string
-		);
+		const isMatchPassword = await bcrypt.compare(password, users[0].password);
 
 		const token = serverClient.createToken(users[0].id);
 
@@ -48,13 +41,13 @@ export const login = async (req: Request, res: Response) => {
 	}
 };
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (req, res) => {
 	const { fullName, username, password, confirmPassword, avatarUrl } = req.body;
 
 	try {
 		const userId = crypto.randomBytes(16).toString("hex");
 
-		const serverClient = new StreamChat.StreamChat(apiKey as string, apiSecret);
+		const serverClient = new StreamChat.StreamChat(apiKey, apiSecret);
 
 		const { users } = await serverClient.queryUsers({ username: username });
 

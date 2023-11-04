@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import express from "express";
 //@ts-ignore
-import { login, signup } from "../controllers/auth.ts";
+import { login, signup } from "../controllers/auth.js";
 
 const router = express.Router();
 
