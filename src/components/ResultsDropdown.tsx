@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Channel } from "stream-chat";
 import { Avatar, useChatContext } from "stream-chat-react";
@@ -10,7 +11,7 @@ type Props = {
 	setChannel: React.Dispatch<React.SetStateAction<any>>;
 	setToggleContainer: React.Dispatch<React.SetStateAction<boolean>>;
 	type: string;
-	channel: typeof Channel;
+	channel: any;
 };
 
 const channelByUser = async ({
@@ -57,7 +58,7 @@ const SearchResult: React.FC<Props> = ({
 					}
 				}}
 				className={
-					focusedId === channel?.id
+					focusedId === channel.id
 						? "channel-search__result-container__focused"
 						: "channel-search__result-container"
 				}>
@@ -114,6 +115,8 @@ const ResultsDropdown: React.FC<Props> = ({
 				</p>
 			) : (
 				teamChannels?.map((channel, i) => (
+					//eslint-disable-next-line
+					//@ts-ignore
 					<SearchResult
 						channel={channel}
 						focusedId={focusedId}
@@ -136,6 +139,8 @@ const ResultsDropdown: React.FC<Props> = ({
 				</p>
 			) : (
 				directChannels?.map((channel, i) => (
+					//eslint-disable-next-line
+					//@ts-ignore
 					<SearchResult
 						channel={channel}
 						focusedId={focusedId}

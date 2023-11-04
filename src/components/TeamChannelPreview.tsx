@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Avatar, useChatContext, Channel } from "stream-chat-react";
 import { DefaultStreamChatGenerics } from "stream-chat-react/dist/types/types";
@@ -5,7 +6,7 @@ import logo from "../assets/pink_icon_logo.png";
 import { UserResponse } from "stream-chat";
 
 interface ITeamChannelPreviewProps {
-	channel?: typeof Channel;
+	channel?: any;
 	error?: boolean;
 	loading?: boolean;
 	type?: string;
@@ -42,9 +43,9 @@ const TeamChannelPreview: React.FC<ITeamChannelPreviewProps> = ({
 	};
 
 	const DirectPreview: React.FC = () => {
-		const members: UserResponse[] | unknown = Object.values(
+		const members: unknown | UserResponse[] = Object.values(
 			channel?.state?.members || {}
-		).filter((member) => member?.user?.id !== client.userID);
+		).filter(({ user }: { user: UserResponse }) => user.id !== client.userID);
 
 		return (
 			<div className='channel-preview__item single'>

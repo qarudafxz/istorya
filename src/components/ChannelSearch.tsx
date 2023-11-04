@@ -8,9 +8,7 @@ interface ChannelSearchProps {
 	setToggleContainer?: React.Dispatch<React.SetStateAction<boolean>> | undefined;
 }
 
-const ChannelSearch: React.FC<ChannelSearchProps> = ({
-	setToggleContainer,
-}) => {
+const ChannelSearch: React.FC<ChannelSearchProps> = () => {
 	const { client, setActiveChannel } = useChatContext();
 
 	const [query, setQuery] = useState("");
@@ -80,6 +78,8 @@ const ChannelSearch: React.FC<ChannelSearchProps> = ({
 						teamChannels={teamChannels}
 						directChannels={directChannels}
 						loading={loading}
+						//eslint-disable-next-line
+						//@ts-ignore
 						setActiveChannel={setActiveChannel}
 						setChannel={setChannel}
 						setQuery={setQuery}

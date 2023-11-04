@@ -106,6 +106,8 @@ const UserList: React.FC<Props> = ({ setSelectedUsers }) => {
 				<>
 					{users?.map((user, i) => (
 						<UserItem
+							//eslint-disable-next-line
+							//@ts-ignore
 							index={i}
 							key={user.id}
 							user={user}

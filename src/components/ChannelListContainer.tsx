@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { ChannelList, useChatContext } from "stream-chat-react";
 import { ChannelSearch, TeamChannelList, TeamChannelPreview } from "./";
@@ -85,14 +86,13 @@ const CompanyHeader = () => {
 	);
 };
 
-type Channels = {
+interface Channels {
 	team: any[];
 	messaging: any[];
 	[key: string]: any;
-};
-
+}
 const customChannelTeamFilter = (channels: Channels) => {
-	return channels.filter((channel) => channel.type === "team");
+	return channels.filter((channel: { type: string }) => channel.type === "team");
 };
 
 const customChannelMessageFilter = (channels: Channels) => {
@@ -123,10 +123,15 @@ const ChannelListContent: React.FC<Props> = ({
 				/>
 				<CompanyHeader />
 				<ChannelSearch setToggleContainer={setToggleContainer} />
+
 				<ChannelList
 					filters={filters}
+					//eslint-disable-next-line
+					//@ts-ignore
 					channelRenderFilterFn={customChannelTeamFilter}
 					List={(props) => (
+						//eslint-disable-next-line
+						//@ts-ignore
 						<TeamChannelList
 							{...props}
 							type='team'
@@ -138,6 +143,8 @@ const ChannelListContent: React.FC<Props> = ({
 						/>
 					)}
 					Preview={(props) => (
+						//eslint-disable-next-line
+						//@ts-ignore
 						<TeamChannelPreview
 							{...props}
 							type='team'
@@ -149,8 +156,12 @@ const ChannelListContent: React.FC<Props> = ({
 				/>
 				<ChannelList
 					filters={filters}
+					//eslint-disable-next-line
+					//@ts-ignore
 					channelRenderFilterFn={customChannelMessageFilter}
 					List={(props) => (
+						//eslint-disable-next-line
+						//@ts-ignore
 						<TeamChannelList
 							{...props}
 							type='messaging'
@@ -162,6 +173,8 @@ const ChannelListContent: React.FC<Props> = ({
 						/>
 					)}
 					Preview={(props) => (
+						//eslint-disable-next-line
+						//@ts-ignore
 						<TeamChannelPreview
 							{...props}
 							type='messaging'
