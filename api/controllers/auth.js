@@ -1,11 +1,14 @@
+/* eslint-disable no-undef */
 import crypto from "crypto";
 import StreamChat from "stream-chat";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
-const apiKey = import.meta.env.VITE_REACT_APP_STREAM_API_KEY;
-const apiSecret = import.meta.env.VITE_REACT_APP_STREAM_API_SECRET;
+const apiKey = process.env.VITE_REACT_APP_STREAM_API_KEY;
+const apiSecret = process.env.VITE_REACT_APP_STREAM_API_SECRET;
+
+console.log(apiKey, apiSecret);
 
 export const login = async (req, res) => {
 	const { username, password } = req.body;
